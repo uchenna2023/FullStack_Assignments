@@ -51,35 +51,40 @@ function App() {
 
 
   const [selected, setSelected] = useState(0);
-  const [vote, setVote] = useState([0,1,2,3,2,3,2,3,4])
+  const [vote, setVote] = useState({ ...new Array(anecdotes.length).fill(0) })
 
   
 
-  const getItemRamdomly = ()=>{
-    setSelected(Math.floor((Math.random() * anecdotes.length)))
+  const getItemRamdomly = ()=> Math.floor((Math.random() * anecdotes.length))
+
+  const handleSelection = () => {
+    setSelected(getItemRamdomly())
   }
 
-  console.log(selected + 'counts')
-
-  const handleVote = ()=>{
-    let i = 0;
-    let copy = {...vote}
-    if(copy[i] === selected) {
-      setVote( copy[i] += 1)
-    }
-    else {
-      setVote( copy)
-    }
-
+  const voteSelectedAnecdote = () => {
+    setVote(prev => {
+      return {
+        ...prev,
+        [selected]: prev[selected] + 1
+      }
+    })
   }
+
+  let maxVote = Object.keys(vote).reduce((a,b)=> vote[a] > vote[b] ? a : b)
 
   return (
     <div className="App">
+      <h1>Anectode of the day</h1>
       {anecdotes[selected]}
-      <p>has {vote} votes</p>
+      <p>has {vote[selected]} votes</p>
       <div>
-        <button onClick={handleVote}>Vote</button>
-        <button onClick={getItemRamdomly}>Get acecdote</button>
+        <button onClick={voteSelectedAnecdote}>Vote</button>
+        <button onClick={handleSelection}>Get acecdote</button>
+      </div>
+      <div>
+        <h1>Anectode with most vote</h1>
+        <p>{anecdotes[maxVote]}</p>
+        <p>has {vote[maxVote]} vote</p>
       </div>
       
     </div>
